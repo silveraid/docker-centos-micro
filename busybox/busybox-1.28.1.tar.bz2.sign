@@ -1,0 +1,18 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+busybox-1.28.1.tar.bz2 released Thu, 15 Feb 2018 14:49:15 +0100
+
+MD5:  928919a21e34d5c5507d872a4fb7b9f4  busybox-1.28.1.tar.bz2
+SHA1: 932e2a77c3ddaa7f0915ed6fe9232041d261f86b  busybox-1.28.1.tar.bz2
+
+To verify this signature, you can obtain my public key
+from http://busybox.net/~vda/vda_pubkey.gpg
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqFj90ACgkQR7cMVazJllvangCfcvKTn7gqdU4RxrKha8Tk2+Hv
+V2YAn1TO0gJ3IaFjUHQ3hX1EUpDh9b/P
+=CHlb
+-----END PGP SIGNATURE-----
