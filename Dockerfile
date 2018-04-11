@@ -17,73 +17,17 @@ RUN     set -eux; \
         mkdir -p ${centos_root} && \
         rpm --root ${centos_root} --initdb && \
         yum reinstall --downloadonly --downloaddir . centos-release && \
-        rpm --root ${centos_root} -ivh centos-release*.rpm
-
-# downloading mandatory packages
-RUN     set -eux; yum reinstall --downloadonly --downloaddir . \
-        bash \
-        glibc \
-        glibc-common \
-        basesystem \
-        setup \
-        filesystem \
-        libgcc \
-        tzdata \
-        libselinux \
-        pcre \
-        libstdc++ \
-        libsepol \
-        ncurses-libs \
-        ncurses-base \
-        nss-softokn-freebl \
-        nspr
+        rpm --root ${centos_root} -ivh centos-release*.rpm && \
+        rpm --root ${centos_root} --import  ${centos_root}/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 # installing mandatory packages
-RUN     rpm --root ${centos_root} -ivh \
-        basesystem-*.el7.centos.noarch.rpm \
-        glibc-*.x86_64.rpm \
-        glibc-common-*.x86_64.rpm \
-        setup-*.el7.noarch.rpm \
-        filesystem-*.el7.x86_64.rpm \
-        libgcc-*.x86_64.rpm \
-        bash-*.x86_64.rpm \
-        libselinux-*.x86_64.rpm \
-        libsepol-*.x86_64.rpm \
-        tzdata-*.el7.noarch.rpm \
-        pcre-*.el7.x86_64.rpm \
-        libstdc++-*.x86_64.rpm \
-        ncurses-libs-*.x86_64.rpm \
-        ncurses-base-*.noarch.rpm \
-        nss-softokn-freebl-*.x86_64.rpm \
-        nspr-*.x86_64.rpm
-
-# downloading libltdl support
-RUN     set -eux; yum install --downloadonly --downloaddir . \
-        libtool-ltdl
-
-# installing libltdl support
-RUN     set -eux; rpm --root $centos_root -ivh \
-        libtool-ltdl*.rpm
-
-# downloading packages to populate ca certificates
-RUN     set -eux; yum reinstall --downloadonly --downloaddir . \
-        ca-certificates \
-        p11-kit \
-        p11-kit-trust \
-        chkconfig \
-        popt \
-        libtasn1 \
-        libffi
-
-# installing packages to populate ca certificates
-RUN     set -eux; rpm --root $centos_root -ivh \
-        ca-certificates-*.el7.noarch.rpm \
-        p11-kit-*.el7.x86_64.rpm \
-        p11-kit-trust-*.el7.x86_64.rpm \
-        libtasn1-*.el7.x86_64.rpm \
-        libffi-*.el7.x86_64.rpm \
-        chkconfig-*.el7.x86_64.rpm \
-        popt-*.el7.x86_64.rpm
+RUN     set -eux; yum -y --installroot=${centos_root} \
+        --setopt=tsflags='nodocs' \
+        --setopt=override_install_langs=en_US.utf8 \
+        install \
+        glibc \
+        libtool-ltdl \
+        ca-certificates
 
 # preparing to compile busybox
 RUN     set -eux; yum groupinstall -y "Development Tools" && \
@@ -113,6 +57,7 @@ RUN     set -eux; \
 
 # How do I reduce the size of locale-archive?
 RUN     set -eux; \
+        rm -rf ${centos_root}/var/cache/yum && \
         echo "localedef --list-archive | grep -v -i ^en | xargs localedef --delete-from-archive" > ${centos_root}/fixme.sh && \
         echo "mv /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive.tmpl" >> ${centos_root}/fixme.sh && \
         echo "build-locale-archive" >> ${centos_root}/fixme.sh && \
